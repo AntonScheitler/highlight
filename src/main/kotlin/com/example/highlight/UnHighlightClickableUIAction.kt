@@ -9,7 +9,9 @@ class UnHighlightClickableUIAction : AnAction() {
 
     override fun actionPerformed(e: AnActionEvent) {
         val frame = WindowManager.getInstance().getFrame(e.project) ?: return
-        HighlightClickableUIAction.colorAllElements(frame, HighlightClickableUIAction.originalColors.first().value)
+        HighlightClickableUIAction.originalColors.forEach { (component, color) ->
+            component.background = color
+        }
         HighlightClickableUIAction.originalColors.clear()
     }
 
