@@ -31,12 +31,9 @@
                     text="Highlight UI Elements"
                     description="Highlight UI Elements">
                 <keyboard-shortcut first-keystroke="shift ctrl G" keymap="$default"/>
-            </action>
-            <action id="UnHighlightClickableUIActionEsc"
-                    class="com.example.highlight.UnHighlightClickableUIAction"
-                    text="Undo Highlighting of UI Elements"
-                    description="Undo Highlighting of UI Elements">
-                <keyboard-shortcut first-keystroke="shift ctrl H" keymap="$default"/>
+                <add-to-group group-id="EditorPopupMenu" anchor="last"/>
+                <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+                <add-to-group group-id="EditorTabPopupMenu" anchor="last"/>
             </action>
     </actions>
 
