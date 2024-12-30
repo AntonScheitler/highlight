@@ -2,12 +2,15 @@ package com.example.highlight
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.PlatformDataKeys
-import com.intellij.openapi.wm.WindowManager
 import com.intellij.ui.JBColor
 import java.awt.Color
 import java.awt.Component
 import java.awt.Container
+import java.awt.Window
+import javax.swing.JComboBox
+import javax.swing.JList
+import javax.swing.JMenuItem
+import javax.swing.JTextField
 import javax.swing.SwingUtilities
 
 class HighlightClickableUIAction : AnAction() {
@@ -19,22 +22,25 @@ class HighlightClickableUIAction : AnAction() {
             if (!component.isVisible) return
 
             if (component is Container) {
-                for (child in component.components) {
+                val children = component.components
+                for (child in children) {
                     colorAllElements(child, color)
                 }
-                if (component.components.isEmpty() && !originalColors.contains(component)) {
-                    originalColors[component] = component.background
-                    component.background = color
-                    component.repaint()
+                if (!originalColors.contains(component)) {
+                    if (children.isEmpty() || component is JTextField || component is JComboBox<*> ||
+                        component is JList<*> || component is JMenuItem
+                    ) {
+                        originalColors[component] = component.background
+                        component.background = color
+                        component.repaint()
+                    }
                 }
             }
         }
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-        val dataContext = e.dataContext
-        val component = dataContext.getData(PlatformDataKeys.CONTEXT_COMPONENT)
-        val window = SwingUtilities.getWindowAncestor(component)
+        val windows = Window.getWindows()
         SwingUtilities.invokeLater {
             if (isHighlighted) {
                 originalColors.forEach{ (component, color) ->
@@ -42,7 +48,11 @@ class HighlightClickableUIAction : AnAction() {
                 }
                 originalColors.clear()
             } else {
-                colorAllElements(window, JBColor.YELLOW)
+                for (window in windows) {
+                    if (window.isVisible) {
+                        colorAllElements(window, JBColor.YELLOW)
+                    }
+                }
             }
             isHighlighted = !isHighlighted
         }
